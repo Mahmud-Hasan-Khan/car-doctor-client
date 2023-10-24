@@ -30,8 +30,11 @@ const Navbar = () => {
                     {navItems}
                 </ul>
             </div>
-            <div className="navbar-end">
+            <div className="navbar-end space-x-4">
                 <button className="btn btn-outline text-[#FF3811] hover:bg-[#FF3811] border hover:border-[#FF3811] ">Appointment</button>
+                <button className="btn btn-outline text-[#FF3811] hover:bg-[#FF3811] border hover:border-[#FF3811] "> <Link to='/login' >Login</Link> </button>
+
+
             </div>
         </div>
     );
