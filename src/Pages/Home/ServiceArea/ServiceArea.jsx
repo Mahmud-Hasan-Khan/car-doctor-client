@@ -9,7 +9,7 @@ const ServiceArea = () => {
     useEffect(() => {
         (async () => {
             try {
-                const res = await fetch('services.json');
+                const res = await fetch('http://localhost:3000/services');
                 if (!res.ok) {
                     throw new Error('Network response is not ok');
                 }
