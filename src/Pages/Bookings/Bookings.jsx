@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import BookingRow from "./BookingRow";
+import Swal from "sweetalert2";
 
 const Bookings = () => {
 
@@ -16,6 +17,70 @@ const Bookings = () => {
     }, [user?.email]);
 
     console.log(bookingData);
+
+    const handleDelete = id => {
+        console.log(id);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`http://localhost:3000/bookings/${id}`,
+                    {
+                        method: 'DELETE',
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.deletedCount > 0) {
+
+                            Swal.fire(
+                                'Done!',
+                                'Your data deleted successful!',
+                                'success'
+                            )
+
+                            const remaining = bookingData.filter(updateBooking => updateBooking._id !== id);
+                            setBookingData(remaining);
+                        }
+                    })
+            }
+        })
+
+    }
+
+    const handleUpdate = id => {
+        console.log(id);
+        fetch(`http://localhost:3000/bookings/${id}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'confirm' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.modifiedCount > 0) {
+                    Swal.fire(
+                        'Done!',
+                        'Your data successfully updated',
+                        'success'
+                    )
+                    const remaining = bookingData.filter(booking => booking._id !== id);
+                    const updated = bookingData.find(booking => booking._id === id);
+                    updated.status = 'confirm';
+                    const newBookings = [updated, ...remaining];
+                    setBookingData(newBookings);
+                }
+            })
+    }
 
     return (
         <div>
@@ -39,7 +104,7 @@ const Bookings = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {bookingData.map(booking => <BookingRow key={booking._id} booking={booking} ></BookingRow>)}
+                        {bookingData.map(booking => <BookingRow key={booking._id} booking={booking} handleDelete={handleDelete} handleUpdate={handleUpdate}></BookingRow>)}
 
                     </tbody>
                 </table>
