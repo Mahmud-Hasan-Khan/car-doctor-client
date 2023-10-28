@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginLogo from "../../assets/login.svg"
 import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Login = () => {
     const { signIn } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -19,13 +22,26 @@ const Login = () => {
             .then((userCredential) => {
                 const loggedInUser = userCredential.user;
                 console.log(loggedInUser);
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Login Successful!',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // jwt implementation ...start
+                const user = { email };
+
+                axios.post('http://localhost:3000/jwt', user, { withCredentials: true })
+                    .then(res => {
+                        console.log(res.data);
+                        if (res.data.success) {
+                            navigate(location?.state ? location?.state : '/')
+                        }
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Login Successful!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    })
+
+                // get access token for jwt
+
             })
             .catch((error) => {
                 const errorMessage = error.message;

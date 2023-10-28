@@ -9,6 +9,7 @@ const PrivateRoute = ({ children }) => {
     console.log(loading, user);
     console.log(user?.email);
     const location = useLocation();
+    // console.log(location);
 
     if (loading) {
         return <span className="loading loading-infinity loading-lg"></span>

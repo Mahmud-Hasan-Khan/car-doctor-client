@@ -2,19 +2,27 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import BookingRow from "./BookingRow";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Bookings = () => {
 
     const { user } = useContext(AuthContext);
     const [bookingData, setBookingData] = useState([]);
 
+    const url = `http://localhost:3000/bookings?email=${user.email}`
+
     useEffect(() => {
-        fetch(`http://localhost:3000/bookings?email=${user.email}`)
-            .then(res => res.json())
-            .then(data => {
-                setBookingData(data)
+        // use Axios
+        axios.get(url, { withCredentials: true })
+            .then(res => {
+                setBookingData(res.data);
             })
-    }, [user?.email]);
+        // fetch(`http://localhost:3000/bookings?email=${user.email}`)
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         setBookingData(data)
+        //     })
+    }, [url]);
 
     console.log(bookingData);
 
